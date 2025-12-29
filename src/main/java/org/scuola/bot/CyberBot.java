@@ -26,11 +26,17 @@ public class CyberBot extends TelegramLongPollingBot {
         if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
         long chatId = update.getMessage().getChatId();
+        String username = update.getMessage().getFrom().getUserName();
         String msg = update.getMessage().getText();
+        String command = msg.split(" ")[0];
 
         try {
+            DatabaseManager.registerUser(chatId, username, command);
+
             if (msg.startsWith("/start")) {
-                send(chatId, "Benvenuto in SafeScan~Bot🔐\n" +
+                send(chatId, "Benvenuto in SafeScan🔐\n" +
+                        "Il bot realizzato permette di controllare lo stato di IP e URL in modo da capire se sono " +
+                        "sicuri oppure dannosi\n" +
                         "/checkip IP\n/checkurl sito\n/stats");
             }
 
