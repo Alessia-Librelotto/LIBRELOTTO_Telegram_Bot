@@ -9,11 +9,11 @@ Bot Telegram di cybersecurity che analizza IP, URL e file utilizzando l'API di V
 
 ## 📋 Descrizione del Progetto
 
-SafeScan è un bot Telegram educativo che permette di verificare la sicurezza di indirizzi IP, siti web e file attraverso l'integrazione con l'API di VirusTotal. Il bot fornisce risposte visive utilizzando immagini correlate ai codici di stato HTTP e mantiene statistiche dettagliate sugli utenti e le analisi effettuate.
+SafeScan è un bot Telegram che permette di verificare la sicurezza di indirizzi IP, siti web e file attraverso l'integrazione con l'API di VirusTotal. Il bot fornisce risposte visive utilizzando immagini correlate ai codici di stato HTTP e mantiene statistiche dettagliate sugli utenti e le analisi effettuate.
 
 ### Funzionalità Principali
 
-- ✅ **Controllo IP**: Verifica se un indirizzo IP è associato a malware, botnet o attività sospette
+- ✅ **Controllo IP**: Verifica se un indirizzo IP è associato a malware o attività sospette
 - ✅ **Analisi URL**: Controlla se un sito web è segnalato come phishing o contiene malware
 - ✅ **Verifica File**: Analizza file tramite hash SHA-256 senza necessità di upload
 - ✅ **Statistiche Utente**: Traccia l'utilizzo del bot e fornisce statistiche dettagliate
@@ -73,7 +73,7 @@ Il database SQLite (`cyberbot.db`) verrà creato automaticamente al primo avvio.
 | `/checkfile <hash>` | Verifica un file tramite hash SHA-256 | `/checkfile e3b0c44...` |
 | `/stats` | Mostra le statistiche personali e totali | `/stats` |
 
-### Esempi di Conversazioni
+### Esempi 
 
 **Controllo IP Sicuro:**
 ```
@@ -179,21 +179,14 @@ INSERT INTO events (telegram_id, event_type, input_value, status_code, is_safe, 
 VALUES (?, ?, ?, ?, ?, ?)
 ```
 
-### Possibili Estensioni Query
-
-Il database permette facilmente di implementare query avanzate come:
-- Numero di minacce rilevate per tipo
-- IP/URL più controllati
-- Trend di sicurezza nel tempo
-- Classifica utenti più attivi
-
 ## 🏗️ Architettura del Progetto
 
 ```
 org.scuola.bot/
-├── Main.java                    # Entry point dell'applicazione
-├── CyberBot.java               # Gestione comandi e logica principale
-├── MyConfiguration.java        # Caricamento configurazione
+├── model/
+|   └── Main.java                    # Entry point dell'applicazione
+|   ├── CyberBot.java               # Gestione comandi e logica principale
+|   ├── MyConfiguration.java        # Caricamento configurazione
 ├── db/
 │   └── DatabaseManager.java    # Gestione database SQLite
 └── api/
@@ -207,7 +200,6 @@ org.scuola.bot/
 Il bot utilizza codici HTTP semantici con immagini associate (tramite http.dog):
 
 - **200**: Risorsa sicura ✅
-- **300**: File sospetto ⚠️
 - **400**: Input non valido ❌
 - **404**: File/risorsa sconosciuta ❓
 - **451**: Contenuto pericoloso (censura per motivi legali) 🚫
@@ -219,17 +211,6 @@ Il bot utilizza codici HTTP semantici con immagini associate (tramite http.dog):
 - Il bot non carica mai file, utilizza solo hash SHA-256
 - Tutti gli input vengono validati prima dell'analisi
 - I risultati si basano esclusivamente sui dati di VirusTotal
-
-## 🤔 Userei questo bot?
-
-**Sì!** SafeScan Bot è uno strumento pratico per:
-
-- 🎓 **Studenti e professionisti IT**: Verificare rapidamente link sospetti ricevuti via email
-- 👨‍💻 **Sviluppatori**: Controllare la reputazione di IP prima di configurare server
-- 🔍 **Utenti comuni**: Verificare la sicurezza di siti web prima di visitarli
-- 🧪 **Ricercatori di sicurezza**: Analizzare hash di file senza doverli eseguire
-
-Il bot è veloce, fornisce feedback visivo chiaro e mantiene uno storico delle verifiche effettuate.
 
 ## 📦 Dipendenze Maven
 
@@ -258,14 +239,6 @@ Il bot è veloce, fornisce feedback visivo chiaro e mantiene uno storico delle v
 </dependencies>
 ```
 
-## 📄 Licenza
-
-Progetto educativo realizzato per scopi didattici.
-
 ## 👨‍💻 Autore
 
-Studentessa - Progetto Telegram Bot con API Esterne
-
----
-
-**⚠️ Disclaimer**: Questo bot è uno strumento educativo. Per decisioni di sicurezza critiche, consultare sempre esperti di cybersecurity professionisti.
+Alessia Librelotto
