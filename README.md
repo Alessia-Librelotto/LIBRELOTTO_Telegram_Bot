@@ -45,15 +45,7 @@ VirusTotal è un servizio che analizza file e URL sospetti per rilevare malware 
 
 ### Configurazione
 
-1. **Clona il repository**
-```bash
-git clone https://github.com/tuousername/COGNOME_Telegram_Bot.git
-cd COGNOME_Telegram_Bot
-```
-
-2. **Crea il file di configurazione**
-
-Crea un file `config.properties` nella cartella `src/main/resources/`:
+Creazione di un file `config.properties` nella cartella `src/main/resources/`:
 
 ```properties
 BOT_TOKEN=inserisci_qui_il_token_del_bot
@@ -61,23 +53,11 @@ BOT_USERNAME=inserisci_qui_username_bot
 VIRUSTOTAL_API_KEY=inserisci_qui_api_key_virustotal
 ```
 
-> ⚠️ **IMPORTANTE**: Non committare mai il file `config.properties` con le tue chiavi reali!
-
 **Come ottenere le credenziali:**
 
 - **BOT_TOKEN**: Crea un bot su Telegram tramite [@BotFather](https://t.me/botfather) e riceverai il token
-- **BOT_USERNAME**: Lo username del bot scelto durante la creazione (es. @MioSafeScanBot)
+- **BOT_USERNAME**: L'username del bot scelto durante la creazione 
 - **VIRUSTOTAL_API_KEY**: Registrati su [VirusTotal](https://www.virustotal.com/gui/join-us) e ottieni la chiave gratuita dalla sezione API Key del tuo profilo
-
-3. **Compila il progetto**
-```bash
-mvn clean install
-```
-
-4. **Avvia il bot**
-```bash
-mvn exec:java -Dexec.mainClass="org.scuola.bot.Main"
-```
 
 Il database SQLite (`cyberbot.db`) verrà creato automaticamente al primo avvio.
 
