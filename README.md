@@ -28,6 +28,18 @@ SafeScan è un bot Telegram che permette di verificare la sicurezza di indirizzi
 
 VirusTotal è un servizio che analizza file e URL sospetti per rilevare malware utilizzando oltre 70 motori antivirus diversi.
 
+### 🧠 Processo tecnico:
+
+Il bot invia l’URL a VirusTotal tramite API, poi:
+
+- controlla blacklist
+- analizza contenuti
+- confronta con malware noti
+- verifica phishing
+- Restituisce un report JSON con:
+     - numero di motori che segnalano l’URL
+     - categoria (malware, phishing, clean, ecc.)
+
 ### Endpoint Utilizzati
 
 - `/ip_addresses/{ip}` - Analisi reputazione indirizzi IP
