@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
 
+//Dato un URL stabilisce se è sicuro o se è pericoloso
 public class UrlScanService {
 
     // Metodo principale per controllare un URL
@@ -43,13 +44,13 @@ public class UrlScanService {
         int malicious = stats.getInt("malicious");
         int suspicious = stats.getInt("suspicious");
 
-        // Costruzione dettagli dei motori antivirus
+        // Costruzione dettagli
         StringBuilder details = new StringBuilder();
         for (String engine : results.keySet()) {
             JSONObject engineData = results.getJSONObject(engine);
             String category = engineData.getString("category");
             String result = engineData.optString("result", "unknown");
-            if (category.equals("malicious") || category.equals("suspicious")) {
+            if (category.equals("malicious")) {
                 details.append("- ").append(engine).append(": ").append(result).append("\n");
             }
         }

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+//Dato l'hash di un file stabilisce se il file è sicuro o se non è mai stato analizzato
 public class FileCheckService {
 
     public static FileCheckResult check(String hash) throws Exception {
@@ -19,7 +20,7 @@ public class FileCheckService {
         con.setRequestProperty("x-apikey", MyConfiguration.get("VIRUSTOTAL_API_KEY"));
 
         if (con.getResponseCode() == 404) {
-            // File sconosciuto -> codice 404
+            // File sconosciuto: codice 404
             return new FileCheckResult(404,
                     "❓ File sconosciuto\nQuesto file non è presente nel database VirusTotal.\n" +
                             "Si consiglia di non eseguirlo.");

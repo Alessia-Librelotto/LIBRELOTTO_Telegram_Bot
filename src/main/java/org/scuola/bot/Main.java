@@ -7,6 +7,6 @@ public class Main {
     public static void main(String[] args) throws Exception {
         TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
         api.registerBot(new CyberBot());
-        System.out.println("Bot avviato!");
+        System.out.println("Bot avviato con successo!");
     }
 }

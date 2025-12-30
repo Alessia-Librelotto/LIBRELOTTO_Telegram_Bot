@@ -10,8 +10,9 @@ public class DatabaseManager {
         try (Connection c = DriverManager.getConnection(URL);
              Statement s = c.createStatement()) {
 
+            // Tabella USERS
             s.execute("""
-                CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS users (
                 telegram_id TEXT PRIMARY KEY,
                 username TEXT,
                 checks INTEGER DEFAULT 0,
@@ -19,26 +20,43 @@ public class DatabaseManager {
                 last_seen TEXT,
                 last_command TEXT
             )
-            """);
+        """);
 
-        } catch (Exception e) { e.printStackTrace(); }
+            // Tabella EVENTS
+            s.execute("""
+            CREATE TABLE IF NOT EXISTS events (
+                event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                telegram_id TEXT NOT NULL,
+                event_type TEXT NOT NULL,
+                input_value TEXT NOT NULL,
+                status_code INTEGER NOT NULL,
+                is_safe INTEGER NOT NULL,
+                risk_reason TEXT,
+                created_at TEXT DEFAULT (datetime('now','localtime')),
+                FOREIGN KEY (telegram_id) REFERENCES users(telegram_id)
+            )
+        """);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 
     public static void registerUser(long telegramId, String username, String lastCommand)
     throws Exception {
         Connection c = DriverManager.getConnection(URL);
 
         PreparedStatement ps = c.prepareStatement("""
-    INSERT INTO users (telegram_id, username, checks, first_seen, last_seen, last_command)
-    VALUES (?, ?, 1, datetime('now','localtime'), datetime('now','localtime'), ?)
-    ON CONFLICT(telegram_id)
-    DO UPDATE SET
-        checks = checks + 1,
-        username = excluded.username,
-        last_seen = datetime('now','localtime'),
-        last_command = excluded.last_command
-""");
-
+            INSERT INTO users (telegram_id, username, checks, first_seen, last_seen, last_command)
+            VALUES (?, ?, 1, datetime('now','localtime'), datetime('now','localtime'), ?)
+            ON CONFLICT(telegram_id)
+            DO UPDATE SET
+                checks = checks + 1,
+                username = excluded.username,
+                last_seen = datetime('now','localtime'),
+                last_command = excluded.last_command
+        """);
 
         ps.setString(1, String.valueOf(telegramId));
         ps.setString(2, username);
@@ -67,7 +85,7 @@ public class DatabaseManager {
                     "Ultimo accesso: " + rsUser.getString("last_seen") + "\n" +
                     "Ultimo comando: " + rsUser.getString("last_command");
         } else {
-            userInfo = "❌ Utente non trovato nel database.";
+            userInfo = "❌ Utente non trovato nel database";
         }
 
         rsUser.close();
@@ -86,6 +104,32 @@ public class DatabaseManager {
         return userInfo + "\n\n👥 Totale utenti registrati: " + totale;
     }
 
+    public static void logEvent(
+            long telegramId,
+            String eventType,
+            String inputValue,
+            int statusCode,
+            boolean isSafe,
+            String riskReason
+    ) throws Exception {
 
+        Connection c = DriverManager.getConnection(URL);
 
+        PreparedStatement ps = c.prepareStatement("""
+        INSERT INTO events 
+        (telegram_id, event_type, input_value, status_code, is_safe, risk_reason)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """);
+
+        ps.setString(1, String.valueOf(telegramId));
+        ps.setString(2, eventType);       // IP, URL, FILE
+        ps.setString(3, inputValue);
+        ps.setInt(4, statusCode);
+        ps.setInt(5, isSafe ? 1 : 0);
+        ps.setString(6, riskReason);
+
+        ps.executeUpdate();
+        ps.close();
+        c.close();
+    }
 }

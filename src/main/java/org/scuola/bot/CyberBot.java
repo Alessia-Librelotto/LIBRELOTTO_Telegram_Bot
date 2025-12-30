@@ -77,33 +77,85 @@ public class CyberBot extends TelegramLongPollingBot {
                                 "- \uD83D\uDC64 /stats");
             }
 
+            /* ===================== CHECK IP ===================== */
             else if (msg.startsWith("/checkip")) {
                 String ip = msg.replace("/checkip", "").trim();
+
+                if (!isValidIp(ip)) {
+                    sendDog(chatId, 400, "❌ IP non valido.\nFormato richiesto: IPv4 o IPv6.");
+                    return;
+                }
+
                 CheckIpService.CheckIpResult result = CheckIpService.check(ip);
                 sendDog(chatId, result.getStatusCode(), result.getMessage());
+
+                // LOG EVENTO
+                DatabaseManager.logEvent(
+                        chatId,
+                        "IP",
+                        ip,
+                        result.getStatusCode(),
+                        result.getStatusCode() == 200,
+                        result.getStatusCode() == 200 ? null : "Segnalato da VirusTotal"
+                );
             }
 
+            /* ===================== CHECK URL ===================== */
             else if (msg.startsWith("/checkurl")) {
                 String url = msg.replace("/checkurl", "").trim();
+
+                if (!isValidUrl(url)) {
+                    sendDog(chatId, 400,
+                            "❌ URL non valido.\nDeve iniziare con http:// o https://");
+                    return;
+                }
+
                 UrlScanService.UrlScanResult result = UrlScanService.scan(url);
                 sendDog(chatId, result.getStatusCode(), result.getMessage());
+
+                // LOG EVENTO
+                DatabaseManager.logEvent(
+                        chatId,
+                        "URL",
+                        url,
+                        result.getStatusCode(),
+                        result.getStatusCode() == 200,
+                        result.getStatusCode() == 200 ? null : "URL segnalato come pericoloso"
+                );
             }
 
+            /* ===================== CHECK FILE ===================== */
             else if (msg.startsWith("/checkfile")) {
                 String hash = msg.replace("/checkfile", "").trim();
+
+                if (!isValidSha256(hash)) {
+                    sendDog(chatId, 400,
+                            "❌ Hash non valido.\nInserire un hash SHA-256 (64 caratteri).");
+                    return;
+                }
+
                 FileCheckService.FileCheckResult result = FileCheckService.check(hash);
                 sendDog(chatId, result.getStatusCode(), result.getMessage());
+
+                // LOG EVENTO
+                DatabaseManager.logEvent(
+                        chatId,
+                        "FILE",
+                        hash,
+                        result.getStatusCode(),
+                        result.getStatusCode() == 200,
+                        result.getStatusCode() == 200 ? null : "File segnalato o sconosciuto"
+                );
             }
 
-
+            /* ===================== STATS ===================== */
             else if (msg.startsWith("/stats")) {
                 String stats = DatabaseManager.getUserStatsWithTotal(chatId);
                 send(chatId, stats);
             }
 
-
         } catch (Exception e) {
-            send(chatId, "Errore: " + e.getMessage());
+            send(chatId, "❌ Errore: " + e.getMessage());
         }
     }
 
@@ -113,6 +165,7 @@ public class CyberBot extends TelegramLongPollingBot {
         } catch (Exception ignored) {}
     }
 
+    //Utilizzo una seconda API in modo da associare i codici di stato a delle immagini
     private void sendDog(long chatId, int statusCode, String caption) {
         try {
             SendPhoto photo = new SendPhoto();
@@ -123,4 +176,24 @@ public class CyberBot extends TelegramLongPollingBot {
         } catch (Exception ignored) {}
     }
 
+    private boolean isValidIp(String ip) {
+        String ipv4 =
+                "^((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)\\.){3}" +
+                        "(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)$";
+
+        return ip.matches(ipv4);
+    }
+
+    private boolean isValidUrl(String url) {
+        try {
+            java.net.URL u = new java.net.URL(url);
+            return u.getProtocol().equals("http") || u.getProtocol().equals("https");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isValidSha256(String hash) {
+        return hash.matches("^[a-fA-F0-9]{64}$");
+    }
 }

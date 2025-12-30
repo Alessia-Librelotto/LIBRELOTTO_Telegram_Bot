@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+//Dato un IP valido stabilisce se è sicuro o dannoso
 public class CheckIpService {
 
     public static CheckIpResult check(String ip) throws Exception {
@@ -47,7 +48,7 @@ public class CheckIpService {
             String category = engineData.getString("category");
             String result = engineData.optString("result", "unknown");
 
-            if (category.equals("malicious") || category.equals("suspicious")) {
+            if (category.equals("malicious")){
                 details.append("- ").append(engine)
                         .append(": ").append(result).append("\n");
             }
