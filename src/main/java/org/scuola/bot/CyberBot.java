@@ -34,10 +34,34 @@ public class CyberBot extends TelegramLongPollingBot {
             DatabaseManager.registerUser(chatId, username, command);
 
             if (msg.startsWith("/start")) {
-                send(chatId, "Benvenuto in SafeScan🔐\n" +
-                        "Il bot realizzato permette di controllare lo stato di IP e URL in modo da capire se sono " +
-                        "sicuri oppure dannosi\n" +
-                        "/checkip IP\n/checkurl sito\n/stats");
+                send(chatId, "Benvenuto in SafeScan Bot!\uD83D\uDD75\uFE0F\u200D♂\uFE0F \n" +
+                                "\n" +
+                                "SafeScan ti aiuta a verificare se IP e siti web sono\n" +
+                                "⚠ pericolosi \n" +
+                                "✅ sicuri \n" +
+                                "utilizzando servizi di sicurezza affidabili.\n" +
+                                "\n" +
+                                "Comandi disponibili:\n" +
+                                "/checkip <indirizzo IP>\n" +
+                                "→ Controlla se un IP è associato a malware, spam o attività sospette.\n" +
+                                "\n" +
+                                "/checkurl <sito web>\n" +
+                                "→ Analizza un URL per capire se è sicuro o dannoso.\n" +
+                                "\n" +
+                                "/stats\n" +
+                                "→ Mostra quanti sono gli utenti registrati nel bot.\n" +
+                                "\n" +
+                                "Esempio:\n" +
+                                "✅ /checkip 8.8.8.8\n" +
+                                "⚠ /checkip 185.220.101.1\n" +
+                                "✅ /checkurl http://example.net/login\n" +
+                                "⚠ /checkurl http://testsafebrowsing.appspot.com/s/phishing.html\n" +
+                                "\n" +
+                                "Rimani al sicuro online \uD83D\uDD10\n" +
+                                "\n" +
+                                "- \uD83D\uDCCD /checkip IP\n" +
+                                "- \uD83D\uDD0E /checkurl sito\n" +
+                                "- \uD83D\uDC64 /stats");
             }
 
             else if (msg.startsWith("/checkip")) {
