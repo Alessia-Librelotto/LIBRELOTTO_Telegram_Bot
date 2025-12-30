@@ -1,13 +1,15 @@
 package org.scuola.bot;
 
 import org.scuola.bot.api.CheckIpService;
-import org.scuola.bot.api.PasswordCheckService;
 import org.scuola.bot.api.UrlScanService;
 import org.scuola.bot.api.FileCheckService;
 import org.scuola.bot.db.DatabaseManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 public class CyberBot extends TelegramLongPollingBot {
 
@@ -77,26 +79,28 @@ public class CyberBot extends TelegramLongPollingBot {
 
             else if (msg.startsWith("/checkip")) {
                 String ip = msg.replace("/checkip", "").trim();
-                String risultato = CheckIpService.check(ip);
-                send(chatId, risultato);
+                CheckIpService.CheckIpResult result = CheckIpService.check(ip);
+                sendDog(chatId, result.getStatusCode(), result.getMessage());
             }
-
 
             else if (msg.startsWith("/checkurl")) {
                 String url = msg.replace("/checkurl", "").trim();
-                String risultato = UrlScanService.scan(url);
-                send(chatId, risultato);
+                UrlScanService.UrlScanResult result = UrlScanService.scan(url);
+                sendDog(chatId, result.getStatusCode(), result.getMessage());
             }
 
             else if (msg.startsWith("/checkfile")) {
                 String hash = msg.replace("/checkfile", "").trim();
-                String risultato = FileCheckService.check(hash);
-                send(chatId, risultato);
+                FileCheckService.FileCheckResult result = FileCheckService.check(hash);
+                sendDog(chatId, result.getStatusCode(), result.getMessage());
             }
 
+
             else if (msg.startsWith("/stats")) {
-                send(chatId, DatabaseManager.getStats());
+                String stats = DatabaseManager.getUserStatsWithTotal(chatId);
+                send(chatId, stats);
             }
+
 
         } catch (Exception e) {
             send(chatId, "Errore: " + e.getMessage());
@@ -108,4 +112,15 @@ public class CyberBot extends TelegramLongPollingBot {
             execute(new SendMessage(String.valueOf(chatId), text));
         } catch (Exception ignored) {}
     }
+
+    private void sendDog(long chatId, int statusCode, String caption) {
+        try {
+            SendPhoto photo = new SendPhoto();
+            photo.setChatId(String.valueOf(chatId));
+            photo.setPhoto(new InputFile("https://http.dog/" + statusCode + ".jpg"));
+            photo.setCaption(caption);
+            execute(photo);
+        } catch (Exception ignored) {}
+    }
+
 }

@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class CheckIpService {
 
-    public static String check(String ip) throws Exception {
+    public static CheckIpResult check(String ip) throws Exception {
 
         // Endpoint VirusTotal per IP
         URL url = new URL("https://www.virustotal.com/api/v3/ip_addresses/" + ip);
@@ -53,17 +53,37 @@ public class CheckIpService {
             }
         }
 
-        // Risultato finale
+        // Determina codice e messaggio
+        int statusCode;
+        String message;
+
         if (malicious > 0) {
-            return "❌ IP pericoloso!\n" +
-                    "Motivi: " + malicious + " motori antivirus lo segnalano.\n" +
-                    "Dettagli:\n" + details;
-        } else if (suspicious > 0) {
-            return "⚠️ IP sospetto.\n" +
-                    "Alcuni motori antivirus lo considerano rischioso.\n" +
-                    "Dettagli:\n" + details;
+            statusCode = 451; // IP pericoloso
+            message = "❌ IP pericoloso!\nMotivi: " + malicious + " motori antivirus lo segnalano.\nDettagli:\n" + details;
         } else {
-            return "✅ IP sicuro.\nNessun motore antivirus lo segnala.";
+            statusCode = 200; // IP sicuro
+            message = "✅ IP sicuro.\nNessun motore antivirus lo segnala.";
+        }
+
+        return new CheckIpResult(statusCode, message);
+    }
+
+    // Classe interna per contenere il risultato
+    public static class CheckIpResult {
+        private final int statusCode;
+        private final String message;
+
+        public CheckIpResult(int statusCode, String message) {
+            this.statusCode = statusCode;
+            this.message = message;
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public String getMessage() {
+            return message;
         }
     }
 }

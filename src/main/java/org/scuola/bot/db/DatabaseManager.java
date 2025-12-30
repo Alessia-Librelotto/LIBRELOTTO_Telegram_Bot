@@ -49,20 +49,43 @@ public class DatabaseManager {
         c.close();
     }
 
-    public static String getStats() throws Exception {
+    public static String getUserStatsWithTotal(long telegramId) throws Exception {
         Connection c = DriverManager.getConnection(URL);
+
+        // Ottieni dettagli dell'utente
+        PreparedStatement psUser = c.prepareStatement("SELECT * FROM users WHERE telegram_id = ?");
+        psUser.setString(1, String.valueOf(telegramId));
+        ResultSet rsUser = psUser.executeQuery();
+
+        String userInfo;
+        if (rsUser.next()) {
+            userInfo = "👤 Informazioni utente:\n" +
+                    "Telegram ID: " + rsUser.getString("telegram_id") + "\n" +
+                    "Username: @" + rsUser.getString("username") + "\n" +
+                    "Comandi eseguiti: " + rsUser.getInt("checks") + "\n" +
+                    "Primo accesso: " + rsUser.getString("first_seen") + "\n" +
+                    "Ultimo accesso: " + rsUser.getString("last_seen") + "\n" +
+                    "Ultimo comando: " + rsUser.getString("last_command");
+        } else {
+            userInfo = "❌ Utente non trovato nel database.";
+        }
+
+        rsUser.close();
+        psUser.close();
+
+        // Ottieni numero totale utenti registrati
         Statement s = c.createStatement();
-
-        ResultSet rs = s.executeQuery("SELECT COUNT(*) AS totale FROM users");
-        rs.next();
-
-        int totale = rs.getInt("totale");
-
-        rs.close();
+        ResultSet rsTotal = s.executeQuery("SELECT COUNT(*) AS totale FROM users");
+        rsTotal.next();
+        int totale = rsTotal.getInt("totale");
+        rsTotal.close();
         s.close();
+
         c.close();
 
-        return "👥 Utenti registrati: " + totale;
+        return userInfo + "\n\n👥 Totale utenti registrati: " + totale;
     }
+
+
 
 }
