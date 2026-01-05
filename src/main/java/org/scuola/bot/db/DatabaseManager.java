@@ -2,37 +2,44 @@ package org.scuola.bot.db;
 
 import java.sql.*;
 
+// Gestisce la connessione al database SQLite
 public class DatabaseManager {
 
+    // URL del database SQLite (file locale)
     private static final String URL = "jdbc:sqlite:cyberbot.db";
 
+
+     // Blocco statico: viene eseguito UNA SOLA VOLTA all'avvio dell'applicazione.
+     // Serve per creare le tabelle se non esistono.
     static {
         try (Connection c = DriverManager.getConnection(URL);
              Statement s = c.createStatement()) {
 
             // Tabella USERS
+            // Contiene le informazioni sugli utenti Telegram
             s.execute("""
             CREATE TABLE IF NOT EXISTS users (
-                telegram_id TEXT PRIMARY KEY,
-                username TEXT,
-                checks INTEGER DEFAULT 0,
-                first_seen TEXT,
-                last_seen TEXT,
-                last_command TEXT
+                telegram_id TEXT PRIMARY KEY,      -- ID univoco dell'utente Telegram
+                username TEXT,                     -- Username Telegram
+                checks INTEGER DEFAULT 0,           -- Numero di comandi eseguiti
+                first_seen TEXT,                    -- Primo utilizzo del bot
+                last_seen TEXT,                     -- Ultimo utilizzo
+                last_command TEXT                  -- Ultimo comando eseguito
             )
         """);
 
             // Tabella EVENTS
+            // Contiene lo storico di tutte le operazioni eseguite dagli utenti
             s.execute("""
             CREATE TABLE IF NOT EXISTS events (
-                event_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                telegram_id TEXT NOT NULL,
-                event_type TEXT NOT NULL,
-                input_value TEXT NOT NULL,
-                status_code INTEGER NOT NULL,
-                is_safe INTEGER NOT NULL,
-                risk_reason TEXT,
-                created_at TEXT DEFAULT (datetime('now','localtime')),
+                event_id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID evento
+                telegram_id TEXT NOT NULL,                  -- Utente che ha eseguito l'azione
+                event_type TEXT NOT NULL,                   -- Tipo evento: IP, URL, FILE
+                input_value TEXT NOT NULL,                  -- Valore analizzato
+                status_code INTEGER NOT NULL,               -- Codice di stato (200, 451, 404...)
+                is_safe INTEGER NOT NULL,                   -- 1 = sicuro, 0 = pericoloso
+                risk_reason TEXT,                            -- Motivo del rischio (se presente)
+                created_at TEXT DEFAULT (datetime('now','localtime')), -- Timestamp
                 FOREIGN KEY (telegram_id) REFERENCES users(telegram_id)
             )
         """);
@@ -42,11 +49,15 @@ public class DatabaseManager {
         }
     }
 
-
+     // Registra o aggiorna un utente.
+     // Se l'utente è nuovo: viene inserito
+     // Se esiste già: aggiorna ultimo accesso e incrementa il contatore
     public static void registerUser(long telegramId, String username, String lastCommand)
-    throws Exception {
+            throws Exception {
+
         Connection c = DriverManager.getConnection(URL);
 
+        // INSERT
         PreparedStatement ps = c.prepareStatement("""
             INSERT INTO users (telegram_id, username, checks, first_seen, last_seen, last_command)
             VALUES (?, ?, 1, datetime('now','localtime'), datetime('now','localtime'), ?)
@@ -67,11 +78,14 @@ public class DatabaseManager {
         c.close();
     }
 
+    // Restituisce: le informazioni dell'utente corrente e il numero totale di utenti registrati
     public static String getUserStatsWithTotal(long telegramId) throws Exception {
         Connection c = DriverManager.getConnection(URL);
 
         // Ottieni dettagli dell'utente
-        PreparedStatement psUser = c.prepareStatement("SELECT * FROM users WHERE telegram_id = ?");
+        PreparedStatement psUser = c.prepareStatement(
+                "SELECT * FROM users WHERE telegram_id = ?"
+        );
         psUser.setString(1, String.valueOf(telegramId));
         ResultSet rsUser = psUser.executeQuery();
 
@@ -104,13 +118,15 @@ public class DatabaseManager {
         return userInfo + "\n\n👥 Totale utenti registrati: " + totale;
     }
 
+    // Registra un evento nel database.
+    // Viene chiamato dopo ogni controllo (IP, URL, FILE)
     public static void logEvent(
             long telegramId,
-            String eventType,
-            String inputValue,
-            int statusCode,
-            boolean isSafe,
-            String riskReason
+            String eventType,     // IP, URL, FILE
+            String inputValue,    // Valore analizzato
+            int statusCode,       // Codice di stato
+            boolean isSafe,       // true = sicuro, false = pericoloso
+            String riskReason     // Motivo del rischio (opzionale)
     ) throws Exception {
 
         Connection c = DriverManager.getConnection(URL);
@@ -122,10 +138,10 @@ public class DatabaseManager {
     """);
 
         ps.setString(1, String.valueOf(telegramId));
-        ps.setString(2, eventType);       // IP, URL, FILE
+        ps.setString(2, eventType);
         ps.setString(3, inputValue);
         ps.setInt(4, statusCode);
-        ps.setInt(5, isSafe ? 1 : 0);
+        ps.setInt(5, isSafe ? 1 : 0); // SQLite non ha booleani
         ps.setString(6, riskReason);
 
         ps.executeUpdate();
