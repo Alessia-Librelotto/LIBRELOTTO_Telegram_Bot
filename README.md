@@ -16,6 +16,7 @@ SafeScan è un bot Telegram che permette di verificare la sicurezza di indirizzi
 - ✅ **Controllo IP**: Verifica se un indirizzo IP è associato a malware o attività sospette
 - ✅ **Analisi URL**: Controlla se un sito web è segnalato come phishing o contiene malware
 - ✅ **Verifica File**: Analizza file tramite hash SHA-256 senza necessità di upload
+- ✅ **Trova il proprio IP**: Cerca l'IP del dispositivo dell'utente e poi lo verifica
 - ✅ **Statistiche Utente**: Traccia l'utilizzo del bot e fornisce statistiche dettagliate
 - ✅ **Database Persistente**: Memorizza informazioni su utenti ed eventi di sicurezza
 - ✅ **Feedback Visivo**: Utilizza immagini correlate ai codici HTTP per rendere le risposte più intuitive
@@ -27,6 +28,12 @@ SafeScan è un bot Telegram che permette di verificare la sicurezza di indirizzi
 - 🔑 [Ottieni la tua API Key gratuita](https://www.virustotal.com/gui/join-us)
 
 VirusTotal è un servizio che analizza file e URL sospetti per rilevare malware utilizzando oltre 70 motori antivirus diversi.
+
+**ipify**
+ipify è un servizio che trova l'indirizzo IP del dispositivo che l'utente sta utilizzando
+
+**HTTP Status Dog**
+HTTP Status Dog è un servizio che fornisce delle immagini associate ai codici di stato
 
 ### 🧠 Processo tecnico:
 

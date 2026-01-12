@@ -1,8 +1,6 @@
 package org.scuola.bot;
 
-import org.scuola.bot.api.CheckIpService;
-import org.scuola.bot.api.UrlScanService;
-import org.scuola.bot.api.FileCheckService;
+import org.scuola.bot.api.*;
 import org.scuola.bot.db.DatabaseManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,8 +9,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.scuola.bot.api.SecurityTipsService;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
- // Classe principale del bot Telegram che gestisce:
+// Classe principale del bot Telegram che gestisce:
  // ricezione dei messaggi
  // chiamate alle API
  // logging nel database
@@ -35,10 +37,55 @@ public class CyberBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        // Ignora update che non contengono messaggi di testo
+        /* ===================== CALLBACK QUERY ===================== */
+        if (update.hasCallbackQuery()) {
+
+            String data = update.getCallbackQuery().getData();
+            long chatId = update.getCallbackQuery().getMessage().getChatId();
+
+            try {
+                // L'utente ha scelto di verificare il suo IP
+                if (data.startsWith("CHECK_MY_IP:")) {
+                    String ip = data.split(":")[1];
+
+                    CheckIpService.CheckIpResult result =
+                            CheckIpService.check(ip);
+
+                    sendDog(chatId,
+                            result.getStatusCode(),
+                            result.getMessage());
+
+                    DatabaseManager.logEvent(
+                            chatId,
+                            "IP",
+                            ip,
+                            result.getStatusCode(),
+                            result.getStatusCode() == 200,
+                            result.getStatusCode() == 200 ? null : "Segnalato da VirusTotal"
+                    );
+                }
+
+                // L'utente ha scelto di NON verificare
+                else if (data.equals("IGNORE")) {
+                    send(chatId,
+                            "👍 Va bene!\n" +
+                                    "Se vuoi controllare qualcosa più tardi puoi usare:\n" +
+                                    "/checkip <IP>\n" +
+                                    "/checkurl <URL>\n" +
+                                    "/checkfile <HASH>\n" +
+                                    "/checkdomain <DOMAIN>");
+                }
+
+            } catch (Exception e) {
+                send(chatId, "❌ Errore durante l'operazione.");
+            }
+
+            return;
+        }
+
+        /* ===================== MESSAGGI TESTO ===================== */
         if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
-        // Recupero informazioni di base dal messaggio
         long chatId = update.getMessage().getChatId();
         String username = update.getMessage().getFrom().getUserName();
         String msg = update.getMessage().getText();
@@ -53,6 +100,10 @@ public class CyberBot extends TelegramLongPollingBot {
                         "se IP, siti web e file sono sicuri oppure potenzialmente dannosi, " +
                         "utilizzando il servizio di analisi VirusTotal.\n\n" +
                         "📌 Comandi disponibili:\n\n" +
+                        "\uD83D\uDCDE /start\n" +
+                        "Avvia il bot\n\n" +
+                        "\uD83E\uDE77 /help\n" +
+                        "Visualizza tutti i comandi disponibili.\n\n"+
                         "🖥️ /checkip <indirizzo IP>\n" +
                         "Controlla se un indirizzo IP è associato a malware, botnet o attività sospette.\n" +
                         "Esempio:\n" +
@@ -71,8 +122,24 @@ public class CyberBot extends TelegramLongPollingBot {
                         "Esempio:\n" +
                         "❓ /checkfile 275a021bbfb6484f4e85a47f9aee3e7e18f00f2a8c6b8f4b8a8e24d0e6dfe8d5\n" +
                         "✅ /checkfile e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n\n" +
+                        "\uD83D\uDD0E /checkdomain <dominio>\n" +
+                                "Analizza un dominio (senza http/https).\n" +
+                                "Esempio:\n" +
+                                "✅ /checkdomain wikipedia.org \n" +
+                                "❓ /checkdomain suspicious-site.net\n" +
+                                "⚠ /checkdomain google.com\n\n" +
+                        "\uD83D\uDCE1 /myip\n" +
+                                "Mostra il tuo indirizzo IP pubblico e ti permette di verificare\n" +
+                                "se è sicuro o potenzialmente dannoso.\n\n" +
+                        "⭐ /tips\n" +
+                        "Mostra delle brevi frasi casuali che consigliano all'utente come rimanere al sicuro online.\n\n" +
                         "📊 /stats\n" + "Mostra quanti utenti hanno utilizzato il bot.\n\n" +
-                        "Rimani al sicuro online 🔐" + "\n" + "- \uD83D\uDCCD /checkip IP\n" + "- \uD83D\uDD0E /checkurl sito\n" + "- \uD83D\uDCC1 /checkfile hash file\n" + "- \uD83D\uDC64 /stats"); }
+                        "Rimani al sicuro online 🔐" + "\n" + "- \uD83E\uDE77 /help\n" + "- \uD83D\uDCCD /checkip IP\n" + "- \uD83D\uDD0E /checkurl sito\n" + "- \uD83D\uDCC1 /checkfile hash file\n" + "- 🌐 /checkdomain dominio\n" + "- \uD83D\uDCE1 /myip\n" + "- ⭐ /tips\n" + "- \uD83D\uDC64 /stats"); }
+
+            /* ===================== HELP ===================== */
+            else if (msg.startsWith("/help")) {
+                send(chatId, HelpService.getHelpMessage());
+            }
 
             /* ===================== CHECK IP ===================== */
             else if (msg.startsWith("/checkip")) {
@@ -160,6 +227,44 @@ public class CyberBot extends TelegramLongPollingBot {
                 );
             }
 
+            /* ===================== CHECK DOMAIN ===================== */
+            else if (msg.startsWith("/checkdomain")) {
+
+                String domain = msg.replace("/checkdomain", "").trim();
+
+                if (domain.isEmpty() || domain.contains("://")) {
+                    sendDog(chatId, 400,
+                            "❌ Dominio non valido.\nEsempio corretto:\n/checkdomain google.com");
+                    return;
+                }
+
+                CheckDomainService.DomainCheckResult result =
+                        CheckDomainService.check(domain);
+
+                sendDog(chatId, result.getStatusCode(), result.getMessage());
+
+                DatabaseManager.logEvent(
+                        chatId,
+                        "DOMAIN",
+                        domain,
+                        result.getStatusCode(),
+                        result.getStatusCode() == 200,
+                        result.getStatusCode() == 200 ? null : "Dominio segnalato"
+                );
+            }
+
+            /* ===================== MY IP ===================== */
+            else if (msg.equals("/myip")) {
+                String ip = MyIpService.getMyIp();
+                askToCheckIp(chatId, ip);
+            }
+
+            /* ===================== TIPS ===================== */
+            else if (msg.equals("/tips")) {
+                String tip = SecurityTipsService.getRandomTip();
+                send(chatId, "💡 Consiglio di sicurezza:\n\n" + tip);
+            }
+
             /* ===================== STATS ===================== */
             else if (msg.startsWith("/stats")) {
                 // Recupera statistiche utente + totale utenti
@@ -214,4 +319,27 @@ public class CyberBot extends TelegramLongPollingBot {
     private boolean isValidSha256(String hash) {
         return hash.matches("^[a-fA-F0-9]{64}$");
     }
-}
+
+     private void askToCheckIp(long chatId, String ip) {
+         InlineKeyboardButton yes = new InlineKeyboardButton("✅ Sì, verifica");
+         yes.setCallbackData("CHECK_MY_IP:" + ip);
+
+         InlineKeyboardButton no = new InlineKeyboardButton("❌ No");
+         no.setCallbackData("IGNORE");
+
+         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(
+                 java.util.List.of(
+                         java.util.List.of(yes, no)
+                 )
+         );
+
+         SendMessage msg = new SendMessage();
+         msg.setChatId(String.valueOf(chatId));
+         msg.setText("🌍 Il tuo IP pubblico è:\n" + ip + "\n\nVuoi verificare se è sicuro?");
+         msg.setReplyMarkup(markup);
+
+         try {
+             execute(msg);
+         } catch (Exception ignored) {}
+     }
+ }
