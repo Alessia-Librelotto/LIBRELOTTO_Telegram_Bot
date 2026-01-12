@@ -63,17 +63,21 @@ public class FileCheckService {
         int statusCode;
         String message;
 
-        // Se almeno un motore segnala il file come sospetto
-        if (suspicious > 0) {
-            statusCode = 300; // File sospetto
-            message = "⚠️ File sospetto.\n" +
-                    "Alcuni motori antivirus lo considerano rischioso. " +
-                    "Si consiglia di non eseguirlo!";
-        } else {
-            // Nessun motore segnala problemi
-            statusCode = 200; // File sicuro
-            message = "✅ File sicuro.\nNessun motore antivirus lo segnala.";
+        // Se almeno un motore segnala il file come malevolo
+        // NOTA: VirusTotal consente l’analisi completa dei file solo tramite upload o API premium.
+        // Con API pubblica è possibile verificare solo file già noti. Quindi, quando un file non è
+        // presente in VirusTotal risulta sconosciuto
+        if (malicious > 0) {
+            statusCode = 451;
+            message = "❌ File MALEVOL0!\n" +
+                    "Segnalato da " + malicious + " motori antivirus.";
         }
+        else {
+            statusCode = 200;
+            message = "✅ File sicuro.\n" +
+                    "Nessun motore antivirus lo segnala.";
+        }
+
 
         // Ritorna il risultato incapsulato in un oggetto
         return new FileCheckResult(statusCode, message);

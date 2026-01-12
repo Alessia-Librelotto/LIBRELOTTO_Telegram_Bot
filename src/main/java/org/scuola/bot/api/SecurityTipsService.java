@@ -3,8 +3,12 @@ package org.scuola.bot.api;
 import java.util.List;
 import java.util.Random;
 
+// Servizio che fornisce consigli di sicurezza informatica
+// Ogni chiamata restituisce un suggerimento casuale
 public class SecurityTipsService {
 
+    // Lista di consigli di cybersecurity
+    // I messaggi sono pronti per essere inviati all'utente
     private static final List<String> TIPS = List.of(
             "🔐 Usa password lunghe e uniche per ogni servizio.",
             "📧 Non aprire allegati email da mittenti sconosciuti.",
@@ -18,9 +22,17 @@ public class SecurityTipsService {
             "📱 Installa app solo da store ufficiali."
     );
 
+    // Generatore di numeri casuali
     private static final Random RANDOM = new Random();
 
+    // Restituisce un consiglio casuale dalla lista
+    // Usato dal comando /tips
     public static String getRandomTip() {
-        return TIPS.get(RANDOM.nextInt(TIPS.size()));
+
+        // Seleziona un indice casuale valido
+        // e ritorna il messaggio corrispondente
+        return TIPS.get(
+                RANDOM.nextInt(TIPS.size())
+        );
     }
 }

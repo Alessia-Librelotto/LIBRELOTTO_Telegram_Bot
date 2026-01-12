@@ -119,10 +119,10 @@ public class DatabaseManager {
     }
 
     // Registra un evento nel database.
-    // Viene chiamato dopo ogni controllo (IP, URL, FILE, DOMAIN)
+    // Viene chiamato dopo ogni controllo (IP, URL, FILE, DOMAIN, PASSWORD, MY IP, TIPS)
     public static void logEvent(
             long telegramId,
-            String eventType,     // IP, URL, FILE, DOMAIN
+            String eventType,     // IP, URL, FILE, DOMAIN, PASSWORD, MY IP, TIPS
             String inputValue,    // Valore analizzato
             int statusCode,       // Codice di stato
             boolean isSafe,       // true = sicuro, false = pericoloso

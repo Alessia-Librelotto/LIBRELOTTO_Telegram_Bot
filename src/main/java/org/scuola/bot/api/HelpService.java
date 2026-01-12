@@ -1,5 +1,6 @@
 package org.scuola.bot.api;
 
+// Crea il messaggio visibile dopo aver digitato il comando /help
 public class HelpService {
 
     public static String getHelpMessage() {
