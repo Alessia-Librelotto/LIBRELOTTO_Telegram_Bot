@@ -97,13 +97,15 @@ public class CyberBot extends TelegramLongPollingBot {
             if (msg.startsWith("/start")) {
                 send(chatId, "🔐 Benvenuto in SafeScan Bot!\n\n" +
                         "SafeScan è un bot di cybersecurity che ti aiuta a verificare " +
-                        "se IP, siti web e file sono sicuri oppure potenzialmente dannosi, " +
+                        "se IP, siti web, file e domini sono sicuri oppure potenzialmente dannosi, " +
                         "utilizzando il servizio di analisi VirusTotal.\n\n" +
                         "📌 Comandi disponibili:\n\n" +
                         "\uD83D\uDCDE /start\n" +
                         "Avvia il bot\n\n" +
                         "\uD83E\uDE77 /help\n" +
                         "Visualizza tutti i comandi disponibili.\n\n"+
+                        "🙂 /example\n" +
+                        "Mostra esempi pratici di utilizzo dei comandi.\n\n" +
                         "🖥️ /checkip <indirizzo IP>\n" +
                         "Controlla se un indirizzo IP è associato a malware, botnet o attività sospette.\n" +
                         "Esempio:\n" +
@@ -128,7 +130,7 @@ public class CyberBot extends TelegramLongPollingBot {
                                 "✅ /checkdomain wikipedia.org \n" +
                                 "❓ /checkdomain suspicious-site.net\n" +
                                 "⚠ /checkdomain google.com\n\n" +
-                        "\uD83D\uDCE1 /myip\n" +
+                        "🌍 /myip\n" +
                                 "Mostra il tuo indirizzo IP pubblico e ti permette di verificare\n" +
                                 "se è sicuro o potenzialmente dannoso.\n\n" +
                         "\uD83C\uDF38 /createpw <lunghezza>\n" +
@@ -138,11 +140,37 @@ public class CyberBot extends TelegramLongPollingBot {
                         "⭐ /tips\n" +
                         "Mostra delle brevi frasi casuali che consigliano all'utente come rimanere al sicuro online.\n\n" +
                         "📊 /stats\n" + "Mostra quanti utenti hanno utilizzato il bot.\n\n" +
-                        "Rimani al sicuro online 🔐" + "\n" + "- \uD83E\uDE77 /help\n" + "- \uD83D\uDCCD /checkip IP\n" + "- \uD83D\uDD0E /checkurl sito\n" + "- \uD83D\uDCC1 /checkfile hash file\n" + "- 🌐 /checkdomain dominio\n" + "- \uD83D\uDCE1 /myip\n" + "- \uD83C\uDF38 /createpw lunghezza\n" + "- ⭐ /tips\n" + "- \uD83D\uDC64 /stats"); }
+                        "Rimani al sicuro online 🔐" + "\n" + "- \uD83E\uDE77 /help\n" + "- 🖥️ /checkip IP\n" + "- 🌐 /checkurl sito\n" + "- 📄 /checkfile hash file\n" + "- \uD83D\uDD0E /checkdomain dominio\n" + "- 🌍 /myip\n" + "- \uD83C\uDF38 /createpw lunghezza\n" + "- ⭐ /tips\n" + "- 📊 /stats"); }
 
             /* ===================== HELP ===================== */
             else if (msg.startsWith("/help")) {
                 send(chatId, HelpService.getHelpMessage());
+            }
+
+            /* ===================== EXAMPLES ===================== */
+            else if (msg.equals("/example")) {
+                send(chatId,
+                        "📘 Esempi di utilizzo dei comandi SafeScan\n\n" +
+
+                                "🖥️ CHECK IP\n" +
+                                "✅ /checkip 8.8.8.8\n" +
+                                "⚠ /checkip 185.220.101.1\n\n" +
+
+                                "🌐 CHECK URL\n" +
+                                "✅ /checkurl https://www.google.com\n" +
+                                "⚠ /checkurl http://testsafebrowsing.appspot.com/s/phishing.html\n\n" +
+
+                                "📄 CHECK FILE (hash SHA-256)\n" +
+                                "✅ /checkfile e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n" +
+                                "❓ /checkfile 275a021bbfb6484f4e85a47f9aee3e7e18f00f2a8c6b8f4b8a8e24d0e6dfe8d5\n\n" +
+
+                                "\uD83D\uDD0E CHECK DOMAIN\n" +
+                                "✅ /checkdomain wikipedia.org\n" +
+                                "⚠ /checkdomain google.com\n" +
+                                "❓ /checkdomain suspicious-site.net\n\n" +
+
+                                "ℹ️ Puoi copiare e incollare ogni esempio direttamente nel bot."
+                );
             }
 
             /* ===================== CHECK IP ===================== */

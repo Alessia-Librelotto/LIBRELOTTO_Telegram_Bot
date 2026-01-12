@@ -9,6 +9,12 @@ public class HelpService {
         
         📌 *Comandi disponibili*
         
+        \uD83E\uDE77 /help
+        Mostra questa guida in qualsiasi momento.
+                 
+        🙂 /example
+        Mostra esempi pratici di utilizzo dei comandi
+        
         🖥️ /checkip <indirizzo IP>
         Controlla se un IP è associato a malware, botnet o attività sospette.
         
@@ -17,10 +23,12 @@ public class HelpService {
         
         📄 /checkfile <hash SHA-256>
         Verifica un file usando il suo hash (senza caricarlo).
-        Se non è nel database VirusTotal risulterà “sconosciuto”.
         
        🔎 /checkdomain <dominio>
        Analizza un dominio (senza http/https). 
+        
+        🌍 /myip
+        Mostra il tuo IP pubblico e ti chiede se vuoi verificarlo.
         
         🌸 /createpw <lunghezza>
         Genera una password sicura casuale.
@@ -28,14 +36,8 @@ public class HelpService {
         ⭐ /tips
         Mostra delle brevi frasi casuali che consigliano all'utente come rimanere al sicuro online.
         
-        🌍 /myip
-        Mostra il tuo IP pubblico e ti chiede se vuoi verificarlo.
-        
         📊 /stats
         Mostra le tue statistiche e il numero totale di utenti.
-        
-        ❓ /help
-        Mostra questa guida in qualsiasi momento.
         
         🔐 Rimani al sicuro online!
         """;

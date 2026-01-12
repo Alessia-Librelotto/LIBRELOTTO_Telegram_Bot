@@ -20,6 +20,7 @@ SafeScan è un bot Telegram che permette di verificare la sicurezza di indirizzi
 - ✅ **Trova il proprio IP**: Mostra l'IP pubblico dell'utente con opzione di verifica interattiva
 - ✅ **Generatore Password**: Crea password sicure casuali con lunghezza personalizzabile
 - ✅ **Consigli di Sicurezza**: Fornisce suggerimenti random per rimanere al sicuro online
+- ✅ **Esempi di utilizzo dei comandi**:  Mostra esempi pratici di utilizzo dei comandi
 - ✅ **Statistiche Utente**: Traccia gli utenti del bot e fornisce statistiche dettagliate
 - ✅ **Database**: Memorizza informazioni su utenti ed eventi di sicurezza
 - ✅ **Feedback Visivo**: Utilizza immagini correlate ai codici HTTP per rendere le risposte più intuitive
@@ -83,18 +84,19 @@ VIRUSTOTAL_API_KEY=inserisci_qui_api_key_virustotal
 
 ### Comandi Disponibili
 
-| Comando | Descrizione                                          | Esempio |
-|---------|------------------------------------------------------|---------|
-| `/start` | Avvia il bot e mostra il menù completo               | `/start` |
-| `/help` | Mostra la guida di tutti i comandi                   | `/help` |
-| `/checkip <IP>` | Controlla la sicurezza di un indirizzo IP            | `/checkip 8.8.8.8` |
-| `/checkurl <URL>` | Analizza un sito web                                 | `/checkurl https://www.google.com` |
-| `/checkdomain <dominio>` | Verifica la reputazione di un dominio                | `/checkdomain wikipedia.org` |
-| `/checkfile <hash>` | Verifica un file tramite hash SHA-256                | `/checkfile e3b0c44...` |
-| `/myip` | Mostra il tuo IP pubblico con opzione di verifica    | `/myip` |
-| `/createpw <lunghezza>` | Genera una password sicura (default 16 caratteri)    | `/createpw 20` |
-| `/tips` | Mostra un consiglio casuale di sicurezza informatica | `/tips` |
-| `/stats` | Mostra le statistiche personali e totali             | `/stats` |
+| Comando                  | Descrizione                                          | Esempio                            |
+|--------------------------|------------------------------------------------------|------------------------------------|
+| `/start`                 | Avvia il bot e mostra il menù completo               | `/start`                           |
+| `/help`                  | Mostra la guida di tutti i comandi                   | `/help`                            |
+| `/example`               |  Mostra esempi pratici di utilizzo dei comandi       | `/example`
+| `/checkip <IP>`          | Controlla la sicurezza di un indirizzo IP            | `/checkip 8.8.8.8`                 |
+| `/checkurl <URL>`        | Analizza un sito web                                 | `/checkurl https://www.google.com` |
+| `/checkdomain <dominio>` | Verifica la reputazione di un dominio                | `/checkdomain wikipedia.org`       |
+| `/checkfile <hash>`      | Verifica un file tramite hash SHA-256                | `/checkfile e3b0c44...`            |
+| `/myip`                  | Mostra il tuo IP pubblico con opzione di verifica    | `/myip`                            |
+| `/createpw <lunghezza>`  | Genera una password sicura (default 16 caratteri)    | `/createpw 20`                     |
+| `/tips`                  | Mostra un consiglio casuale di sicurezza informatica | `/tips`                            |
+| `/stats`                 | Mostra le statistiche personali e totali             | `/stats`                           |
 
 ### Esempi Pratici
 
