@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+// Dato un DOMAIN valido stabilisce se è sicuro, dannoso o sconosciuto
+// Il controllo viene effettuato tramite l'API VirusTotal
 public class CheckDomainService {
 
     public static DomainCheckResult check(String domain) throws Exception {
@@ -75,18 +77,11 @@ public class CheckDomainService {
                     "Segnalato come malevolo da " + malicious + " motori antivirus.";
         }
 
-        // ⚠️ SOSPETTO
-        else if (suspicious > 0) {
-            statusCode = 403;
-            message = "⚠️ Dominio sospetto.\n" +
-                    suspicious + " motori lo segnalano come sospetto.";
-        }
-
         // 🔑 SICURO solo se:
         // 1. harmless alto (> 20)
         // 2. E almeno UNO tra:
-        //    - Ha voti della community (persone reali lo hanno visitato)
-        //    - Ha popularity ranks (è un sito popolare)
+        //    - persone reali lo hanno visitato
+        //    - è un sito popolare
         //    - Ha reputation positiva (> 0)
         else if (harmless > 20 && (totalCommunityVotes > 0 || hasPopularity || reputation > 0)) {
             statusCode = 200;

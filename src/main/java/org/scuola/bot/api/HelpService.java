@@ -20,7 +20,10 @@ public class HelpService {
         
        🔎 /checkdomain <dominio>
        Analizza un dominio (senza http/https). 
-                
+        
+        🌸 /createpw <lunghezza>
+        Genera una password sicura casuale.
+                        
         ⭐ /tips
         Mostra delle brevi frasi casuali che consigliano all'utente come rimanere al sicuro online.
         

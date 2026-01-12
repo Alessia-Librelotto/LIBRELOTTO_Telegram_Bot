@@ -131,10 +131,14 @@ public class CyberBot extends TelegramLongPollingBot {
                         "\uD83D\uDCE1 /myip\n" +
                                 "Mostra il tuo indirizzo IP pubblico e ti permette di verificare\n" +
                                 "se è sicuro o potenzialmente dannoso.\n\n" +
+                        "\uD83C\uDF38 /createpw <lunghezza>\n" +
+                                "Genera una password sicura casuale.\n" +
+                                "Esempio:\n" +
+                                "/createpw 16\n\n" +
                         "⭐ /tips\n" +
                         "Mostra delle brevi frasi casuali che consigliano all'utente come rimanere al sicuro online.\n\n" +
                         "📊 /stats\n" + "Mostra quanti utenti hanno utilizzato il bot.\n\n" +
-                        "Rimani al sicuro online 🔐" + "\n" + "- \uD83E\uDE77 /help\n" + "- \uD83D\uDCCD /checkip IP\n" + "- \uD83D\uDD0E /checkurl sito\n" + "- \uD83D\uDCC1 /checkfile hash file\n" + "- 🌐 /checkdomain dominio\n" + "- \uD83D\uDCE1 /myip\n" + "- ⭐ /tips\n" + "- \uD83D\uDC64 /stats"); }
+                        "Rimani al sicuro online 🔐" + "\n" + "- \uD83E\uDE77 /help\n" + "- \uD83D\uDCCD /checkip IP\n" + "- \uD83D\uDD0E /checkurl sito\n" + "- \uD83D\uDCC1 /checkfile hash file\n" + "- 🌐 /checkdomain dominio\n" + "- \uD83D\uDCE1 /myip\n" + "- \uD83C\uDF38 /createpw lunghezza\n" + "- ⭐ /tips\n" + "- \uD83D\uDC64 /stats"); }
 
             /* ===================== HELP ===================== */
             else if (msg.startsWith("/help")) {
@@ -257,12 +261,61 @@ public class CyberBot extends TelegramLongPollingBot {
             else if (msg.equals("/myip")) {
                 String ip = MyIpService.getMyIp();
                 askToCheckIp(chatId, ip);
+
+                DatabaseManager.logEvent(
+                        chatId,
+                        "MYIP",
+                        "requested",
+                        200,
+                        true,
+                        null
+                );
+            }
+
+            /* ===================== CREATE PASSWORD ===================== */
+            else if (msg.startsWith("/createpw")) {
+
+                int length = 16; // default
+
+                // Permette: /createpw 20
+                String[] parts = msg.split(" ");
+                if (parts.length > 1) {
+                    length = Integer.parseInt(parts[1]);
+                }
+
+                String password = PasswordGeneratorService.generate(length);
+
+                send(chatId,
+                        "🔐 Password generata:\n\n" +
+                                "`" + password + "`\n\n" +
+                                "✔ Lunghezza: " + length + "\n" +
+                                "✔ Include lettere, numeri e simboli\n\n" +
+                                "⚠ Non condividere mai questa password!"
+                );
+
+                DatabaseManager.logEvent(
+                        chatId,
+                        "PASSWORD",
+                        "generated",
+                        200,
+                        true,
+                        null
+                );
             }
 
             /* ===================== TIPS ===================== */
             else if (msg.equals("/tips")) {
                 String tip = SecurityTipsService.getRandomTip();
                 send(chatId, "💡 Consiglio di sicurezza:\n\n" + tip);
+
+                DatabaseManager.logEvent(
+                        chatId,
+                        "TIPS",
+                        tip,
+                        200,
+                        true,
+                        null
+                );
             }
 
             /* ===================== STATS ===================== */
